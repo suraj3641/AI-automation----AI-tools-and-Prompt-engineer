@@ -1,0 +1,330 @@
+{
+  "name": "AI Travel Planner",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-travel-planner",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "05cae217-9c48-4f81-8cf8-9015a7663258",
+      "webhookId": "5a70ce4f-ae3e-4443-bdc2-e55b082ec233"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Hi'{{ $json.body[\"0\"] }} Create a personalized {{ $json.body[\"4\"] }}-day travel itinerary for {{ $json.body['7'] }} people, starting from {{ $json.body['2'] }} to {{ $json.body['1'] }} on {{ $json.body['3'] }}.\nThe total budget is ₹{{ $json.body['5'] }}, and preferred transport is {{ $json.body['6'] }}.\nThe user prefers a {{ $json.body['8'] }} type trip with {{ $json.body['9'] }} accommodation.\nFood preference is {{ $json.body['10'][0] }}, and they are interested in {{ $json.body['12'] }}.\nInstagram-worthy spots: {{ $json.body['11'] }}\n\n\nGenerate a clear, day-wise plan including:\n- Key attractions\n- Travel tips\n- Suggested timings\n- Approximate cost per day\n\nAlso provide a 1-line summary (e.g., \"4-day Manali trip with cafes, snow and adventure\").\n\n✉️ After generating, send the full itinerary to the user’s email: {{ $json.body['13'] }}.",
+        "options": {
+          "systemMessage": "=Goal:\nYour job is to generate a personalized travel Planner using structured user input from a webhook, save a 1-line summary in Google Sheets, and send the full Planner to the user's email address using Gmail.\n\nTool Usage:\n\nUse the “Add Input in sheets” tool to log all customer feedback details into Google Sheets.\nImmediately after saving to Sheets, use the “Send a message in Gmail” tool to email the same Travel Planner to the predefined recipient.\n\nInstructions:\n\n1. Before generating the Planner, validate that all required fields are present:\n\n- user_name\n- user_email  \n- current_city  \n- destination  \n- start_date  \n- duration  \n- people  \n- budget  \n- mode  \n- trip_type  \n- accommodation  \n- food  \n- interests  \n- instagram\n\n\n2. If data is present:\n   - Generate a clear, day-wise travel Planner including:\n     - Key attractions\n     - Travel tips\n     - Suggested timings\n     - Approximate cost per day\n   - Create a compact 1-line trip summary (e.g., \"4-day Goa trip with beaches, nightlife and food tour\")\n   - Save that summary using the Sheets tool\n   - Send the full Planner using the Gmail tool to \"user_email\"\n\nImportant:\n- Only send the generated Planner content in the Gmail  (not raw inputs).\n-every Point in in Bullekh Point and Little bit short answer. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "7cb0bb22-4992-4c3a-84e5-310d90d4844e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        144,
+        224
+      ],
+      "id": "48680e78-bf94-493a-b1ba-ee13ef159181",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wpioBgYAtpL1e0eZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1tXkCaugIIwAf6IWW6IbtrliPSETs9mbNzaBpZCO4cOE",
+          "mode": "list",
+          "cachedResultName": "AI Travel Planner",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tXkCaugIIwAf6IWW6IbtrliPSETs9mbNzaBpZCO4cOE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Travel",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tXkCaugIIwAf6IWW6IbtrliPSETs9mbNzaBpZCO4cOE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Webhook').item.json.body[\"0\"] }}",
+            "Email": "={{ $('Webhook').item.json.body[\"13\"] }}",
+            "Like to Travel": "={{ $('Webhook').item.json.body[\"1\"] }}",
+            "Current City": "={{ $('Webhook').item.json.body[\"2\"] }}",
+            "Planinig Days": "={{ $('Webhook').item.json.body[\"3\"] }}",
+            "Total Budget": "={{ $('Webhook').item.json.body[\"5\"] }}",
+            "Transport": "={{ $('Webhook').item.json.body[\"6\"] }}",
+            "People": "={{ $('Webhook').item.json.body[\"7\"] }}",
+            "Choose your Travel style": "={{ $('Webhook').item.json.body[\"8\"] }}",
+            "Stay Preference": "={{ $('Webhook').item.json.body[\"9\"] }}",
+            "Helps us Plan your Meals": "={{ $('Webhook').item.json.body[\"10\"] }}",
+            "Feed awesome": "={{ $('Webhook').item.json.body[\"11\"] }}",
+            "Must-visit Places": "={{ $('Webhook').item.json.body[\"12\"] }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Like to Travel",
+              "displayName": "Like to Travel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Current City",
+              "displayName": "Current City",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Planinig Days",
+              "displayName": "Planinig Days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total Budget",
+              "displayName": "Total Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Transport",
+              "displayName": "Transport",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "People",
+              "displayName": "People",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Choose your Travel style",
+              "displayName": "Choose your Travel style",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Stay Preference",
+              "displayName": "Stay Preference",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Helps us Plan your Meals",
+              "displayName": "Helps us Plan your Meals",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Feed awesome",
+              "displayName": "Feed awesome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Must-visit Places",
+              "displayName": "Must-visit Places",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        304
+      ],
+      "id": "0571a1a7-15d0-4b71-875a-379c61cd9a1a",
+      "name": "Append or update row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mIatLu3mkSOfZXnF",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body[\"13\"] }}",
+        "subject": "Welcome to My AI Travel Planner Website",
+        "emailType": "text",
+        "message": "=\nHi {{ $json.body[\"0\"] }},\n\nHere is your personalized {{ $json.body[\"4\"] }}-day travel itinerary for {{ $json.body['7'] }} people, starting from {{ $json.body['2'] }} to {{ $json.body['1'] }} on {{ $json.body['3'] }}.\n\nYour budget is ₹{{ $json.body['5'] }}, with {{ $json.body['6'] }} as your preferred transport.  \nTrip type: {{ $json.body['8'] }}  \nAccommodation: {{ $json.body['9'] }}  \nFood preference: {{ $json.body['10'][0] }}  \nSpecial interests: {{ $json.body['12'] }}  \nInstagram-worthy spots: {{ $json.body['11'] }}\n\n👉 Below is your detailed day-wise plan including key attractions, timings, travel tips, and approximate costs:\n\n{{ $fromAI(\"Message\", \"\", \"string\") }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        240
+      ],
+      "id": "ec98d79d-a71d-4e5a-a6c9-6fab4ae9de84",
+      "name": "Send a message in Gmail",
+      "webhookId": "8b246c3c-f0b2-41cf-aa1e-ea6a22118ece",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "geo3BIE1E8WHXqLy",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "190988cf-f02c-4327-abea-a2fd5dbf08a9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "84d3a1f1eafc478da06eecfc8e330ffbf69e16f406c5974a4d0c9f6491069d2e"
+  },
+  "id": "ihTZwwbuadkLIXRE",
+  "tags": []
+}
