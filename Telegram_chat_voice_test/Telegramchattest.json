@@ -1,0 +1,239 @@
+{
+  "name": "Telegramchattest",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "90312349-1cdc-4cb8-ba67-18e7ff1abac0",
+      "name": "Telegram Trigger",
+      "webhookId": "4f13cee4-01f4-4a91-924a-bae9cf1d6d54",
+      "credentials": {
+        "telegramApi": {
+          "id": "3hLTc2bUexxugXvl",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fa46fb0a-9253-4bd4-a90a-f1a121ebc0ad",
+      "name": "Get a file",
+      "webhookId": "cf866bb2-b5d2-46a5-816c-13ebd4619847",
+      "credentials": {
+        "telegramApi": {
+          "id": "3hLTc2bUexxugXvl",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "operation": "speechToText",
+        "additionalOptions": {},
+        "requestOptions": {}
+      },
+      "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "3f334c3f-6e24-4fed-a927-c6b900492eb8",
+      "name": "Transcribe audio or video",
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "zMYQ7VcUOQzqhGZJ",
+          "name": "ElevenLabs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User query: {{ $json.text }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant. Respond to the user Query in about 150 word in simple and polite tone."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "40231546-2313-4902-8c96-25e549117762",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        496,
+        208
+      ],
+      "id": "cee56728-9f56-4f7e-b71a-23d49e83c9fd",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dBPNyId58dQkYjBR",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "voice": {
+          "__rl": true,
+          "value": "m5qndnI7u4OAdXhH0Mr5",
+          "mode": "list",
+          "cachedResultName": "Krishna - Energetic Hindi Voice"
+        },
+        "text": "={{ $json.output }}",
+        "additionalOptions": {},
+        "requestOptions": {}
+      },
+      "type": "@elevenlabs/n8n-nodes-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [
+        976,
+        0
+      ],
+      "id": "ee39aa65-f1c7-4344-bb7f-ae34512fba17",
+      "name": "Convert text to speech",
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "zMYQ7VcUOQzqhGZJ",
+          "name": "ElevenLabs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1184,
+        0
+      ],
+      "id": "38b97b45-538f-417e-8d33-210017991bbc",
+      "name": "Send an audio file",
+      "webhookId": "75c2efc2-10d3-40bc-949e-ef28ddb8cdd1",
+      "credentials": {
+        "telegramApi": {
+          "id": "3hLTc2bUexxugXvl",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe audio or video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe audio or video": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Convert text to speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert text to speech": {
+      "main": [
+        [
+          {
+            "node": "Send an audio file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6d21fb62-12ae-4619-a8d5-ef81f2390032",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a3d2b4824ba980174b7bc12ea6f553c32a6aa41efe766879e780cff7b2fa284a"
+  },
+  "id": "1TKC17VXajsS8fxf",
+  "tags": []
+}

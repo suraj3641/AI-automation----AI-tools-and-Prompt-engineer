@@ -1,0 +1,230 @@
+{
+  "name": "NailArt Appointment Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "\"Welcome lovely! 💎 This is Your Nail Stylist Assistant from the Nail Art Salon. Want to book a fresh design, reschedule, or cancel an appointment?\"",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        -32
+      ],
+      "id": "808c32f8-ee66-4eff-9eb9-e8ab21fe5060",
+      "name": "When chat message received",
+      "webhookId": "e3edb768-0d0f-40cb-b4d4-2cd8a51263fc"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=Role\n\nYou are a scheduling assistant working for a nail art salon.\nYour role is to help customers schedule, manage, and delete an appointment in the nail art salon's calendar.\n\nContext\n\nFor creating an appointment:\n1.Ask the user for their preferred appointment day.\n2.Use the get_all_calendar_events tool to identify free time slots for the user-specified day.\n3.Show the user available time slots for their preferred day and get from user the time slot they would like to book an appointment for. If there are no available time slots for that day, start from step 1 again and ask the user for a new day preference.\n4.Ask the user for the information you require to book the calendar appointment. In order to book the appointment, you need the user's full name, mobile number and email.\n5.Use the create_calendar_appointment tool to book the appointment for the user, using details captured from step 4.\n6.Once the appointment is booked, notify the user with relevant details for their appointment. Notify user if it was not possible to create the appointment.\n\n\n\nFollow the following steps to delete an appointment for the user:\n\n1.Ask the user for the day on which they want to delete an appointment.\n2.Ask the user to provide their full name and registered email address that was used when booking the appointment.\n3.Use the get_all_calendar_events tool to fetch the list of appointments for that day.\n4.Match the appointment based on the provided name and email. If the email does not match any existing appointment, do not display the list of appointments and inform the user that no appointment exists with the given details.\n5.If a valid appointment is found, show the matching appointment(s) to the user and ask which one they want to delete (based on time slot).\n6.Use the delete_calendar_appointment tool to remove the selected appointment from the calendar.\n\n7.Confirm to the user whether the appointment was successfully deleted or not.\n8.The current date and time is {{ $now }}\n\n\n\nTask\nHelp the user either create a new appointment or delete an existing appointment securely (with name & Gmail confirmation) based on their request.\n\n# Format"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "5fd926d5-ceed-402b-a4f3-57a4362f406d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        16,
+        224
+      ],
+      "id": "7e04ff28-6f2b-4a1f-8886-d73560474731",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wpioBgYAtpL1e0eZ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        176
+      ],
+      "id": "e14b6c8f-0e54-4a94-b746-b2d974289d05",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "muryasuraj376@gmail.com",
+          "mode": "list",
+          "cachedResultName": "muryasuraj376@gmail.com"
+        },
+        "timeMin": "={{ $fromAI(\"eventAfter\", \"Get all the  events after this time.\") }}",
+        "timeMax": "={{ $fromAI(\"eventBefore\", \"Get all the  events before this time.\") }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        656,
+        144
+      ],
+      "id": "b8da16af-648f-4cf7-9051-cdd7fc4fe07b",
+      "name": "get_all_calender_events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "xFVFhhrk5SJkFHqZ",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "muryasuraj376@gmail.com",
+          "mode": "list",
+          "cachedResultName": "muryasuraj376@gmail.com"
+        },
+        "start": "={{ $fromAI('Start',  'Get all the  events After this time') }}",
+        "end": "={{ $fromAI(\"End\", \"Get all the  events before this time.\") }}",
+        "additionalFields": {
+          "summary": "={{ $fromAI(\"summary\", \"This is the title  of the event\") }} "
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        224
+      ],
+      "id": "5c413345-bb3f-47a6-b9ca-9ca856d88d53",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "xFVFhhrk5SJkFHqZ",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "muryasuraj376@gmail.com",
+          "mode": "list",
+          "cachedResultName": "muryasuraj376@gmail.com"
+        },
+        "eventId": "={{ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        288
+      ],
+      "id": "619dd37f-493c-45c3-8ab5-c9ccbdf56d82",
+      "name": "Delete an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "xFVFhhrk5SJkFHqZ",
+          "name": "Google Calendar account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_all_calender_events": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4658d91b-7fb7-4c20-a242-c224f1b749cf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "84d3a1f1eafc478da06eecfc8e330ffbf69e16f406c5974a4d0c9f6491069d2e"
+  },
+  "id": "yMiJY5oSLTef0Zoi",
+  "tags": []
+}

@@ -1,0 +1,521 @@
+{
+  "name": "OrderFormsubmission",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Super cool Led T-shirt Pre-order",
+        "formDescription": "to get a T shirt delivered at your home,\nPlease fill out this Pre-order.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Address",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Size",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "XS"
+                  },
+                  {
+                    "option": "S"
+                  },
+                  {
+                    "option": "M"
+                  },
+                  {
+                    "option": "L"
+                  },
+                  {
+                    "option": "XL"
+                  },
+                  {
+                    "option": "XXL"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Quantity",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Color",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Payment Method",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Cash On delivery"
+                  },
+                  {
+                    "option": "UPI/Card"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -416,
+        -144
+      ],
+      "id": "594f194f-d9de-46f5-9146-52935a725b7f",
+      "name": "On form submission",
+      "webhookId": "3e94e082-39c3-4b85-a5a2-a9f6b19ebb50"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1eDXDNJQel7Om7pGITfJG5JywIrhFVZ-g8mJ6-J7Oglk",
+          "mode": "list",
+          "cachedResultName": "Pre-Order",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDXDNJQel7Om7pGITfJG5JywIrhFVZ-g8mJ6-J7Oglk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1240023391,
+          "mode": "list",
+          "cachedResultName": "Payment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDXDNJQel7Om7pGITfJG5JywIrhFVZ-g8mJ6-J7Oglk/edit#gid=1240023391"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Email": "={{ $json[\"Email Address\"] }}",
+            "Phone number": "={{ $json[\"Phone Number\"] }}",
+            "Size": "={{ $json.Size }}",
+            "Quantity": "={{ $json.Quantity }}",
+            "Color": "={{ $json.Color }}",
+            "Address": "={{ $json.Address }}",
+            "Date and Time": "={{ $json.submittedAt }}",
+            "Payment  Method": "={{ $json[\"Payment Method\"] }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone number",
+              "displayName": "Phone number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Color",
+              "displayName": "Color",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Size",
+              "displayName": "Size",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantity",
+              "displayName": "Quantity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date and Time",
+              "displayName": "Date and Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Payment  Method",
+              "displayName": "Payment  Method",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Approve",
+              "displayName": "Approve",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -208,
+        -144
+      ],
+      "id": "7ebce58e-ee48-4b0b-b8ea-50546736f060",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mIatLu3mkSOfZXnF",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "264613cf-526a-49b4-aacf-3a7c939c13df",
+              "leftValue": "={{ $json.Quantity }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -144
+      ],
+      "id": "36b52a08-60cb-422b-8ba2-95e7cc75cc81",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Quantity }}",
+                    "rightValue": 5,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    },
+                    "id": "09f27683-9a25-4558-bca6-c4bfe3e746e7"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1d2eeb63-d661-4dcb-a48c-a0647e6f8c82",
+                    "leftValue": "={{ $json.Quantity }}",
+                    "rightValue": 5,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        208,
+        -144
+      ],
+      "id": "d85d1edc-ee93-400e-b30b-da2df805cc11",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Order Conformation",
+        "emailType": "text",
+        "message": "=Hii \n{{ $json.Name }}\n\nYour order details,\nMail:{{ $json.Email }}\nMobile No:{{ $json[\"Phone number\"] }}\nOrder Quantity:{{ $json.Quantity }}\nOrder Date: {{ $now.toLocaleString() }}\nOrder completion:{{ $now.plus(7, 'days').toLocaleString() }}\n\nAddress:{{ $json.Address }}\ncolor:{{ $json.Color }}\n\nPlease reach out to use if any qoueries.\n\nThank you for purchase.\nGood day,\nTeam Surajcloaths\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        0
+      ],
+      "id": "bcae4c62-83c4-417e-b9cf-5c06bd563b7a",
+      "name": "Send a message",
+      "webhookId": "1f3bfdde-e533-4f92-9638-6e5a52706cd6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "geo3BIE1E8WHXqLy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Order Conformation",
+        "emailType": "text",
+        "message": "=Hii \n{{ $json.Name }}\n\nYour order details,\nMail: {{ $json.Email }}\nMobile No:{{ $json[\"Phone number\"] }}\nOrder Quantity:{{ $json.Quantity }}\nOrder Date: {{ $now.toLocaleString() }}\nOrder completion:{{ $now.plus(3, 'days').toLocaleString() }}\nAddress:{{ $json.Address }}\ncolor:{{ $json.Color }}\n\nPlease reach out to use if any qoueries.\nthank you for purchase.\nGood day,\nTeam Surajcloaths\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        -240
+      ],
+      "id": "eb1a0efc-3beb-4eef-8bb8-62fcc3b24746",
+      "name": "Send a message1",
+      "webhookId": "1f3bfdde-e533-4f92-9638-6e5a52706cd6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "geo3BIE1E8WHXqLy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        784,
+        -128
+      ],
+      "id": "c37af432-ed85-420c-8da3-c5a8657dc389",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "sendTo": "muryasuraj376@gmail.com",
+        "subject": "Order Conformation_Delivery",
+        "emailType": "text",
+        "message": "=Hii \nSuraj\n\nPlease find the details below,\n\nCustomer Name:{{ $('On form submission').item.json.Name }}\n\nCustomerEmailaddress: {{ $('On form submission').item.json[\"Email Address\"] }}\n\nAddress: {{ $('On form submission').item.json.Address }}\n\nPhone No.{{ $('On form submission').item.json[\"Phone Number\"] }}\n\nSize:{{ $('On form submission').item.json.Size }}\n\ncolor:{{ $('On form submission').item.json.Color }}\n\nQuantity:{{ $('Filter').item.json.Quantity }}\n\nPayment: {{ $('On form submission').item.json[\"Payment Method\"] }}\n\nOrder date: {{ $now.toLocaleString() }}\n\nDelivery date:{{ $if( $('On form submission').item.json.submittedAt <= 5, $now.plus(2,'days').toLocaleString(), $now.plus(7, 'days').toLocaleString() \"\") }}\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        -128
+      ],
+      "id": "b164096c-6edc-42a4-bd9b-486a382c54ba",
+      "name": "Send a message2",
+      "webhookId": "1f3bfdde-e533-4f92-9638-6e5a52706cd6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "geo3BIE1E8WHXqLy",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d94e7ef1-0742-4952-aead-2e25c222a4c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "84d3a1f1eafc478da06eecfc8e330ffbf69e16f406c5974a4d0c9f6491069d2e"
+  },
+  "id": "IUWP9RKIBQ6EBmX7",
+  "tags": []
+}
